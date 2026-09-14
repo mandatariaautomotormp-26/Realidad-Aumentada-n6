@@ -2,49 +2,189 @@
 <html lang="es">
 
 <head>
+
   <meta charset="UTF-8">
 
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0">
 
-  <title>Prueba RA</title>
+  <title>Realidad Aumentada | Sistemas y Organizaciones</title>
 
+  <!-- A-FRAME -->
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 
+  <!-- MINDAR -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+  <style>
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    /* CARTEL DE ESTADO */
+
+    #estado {
+      position: fixed;
+      z-index: 100;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+
+      width: calc(100% - 40px);
+      max-width: 430px;
+
+      padding: 13px 18px;
+
+      box-sizing: border-box;
+
+      border-radius: 15px;
+
+      background: rgba(5, 8, 22, 0.82);
+
+      color: white;
+
+      text-align: center;
+
+      font-size: 15px;
+
+      line-height: 1.4;
+
+      backdrop-filter: blur(8px);
+    }
+
+  </style>
 
 </head>
 
-<body style="margin:0; overflow:hidden;">
+
+<body>
+
+
+  <!-- AVISO -->
+
+  <div id="estado">
+    🔎 Buscando la imagen...
+  </div>
+
+
+  <!-- ESCENA AR -->
 
   <a-scene
+
+    id="escena"
+
     mindar-image="
       imageTargetSrc: ./targets.mind;
+      autoStart: true;
+      uiLoading: yes;
+      uiScanning: yes;
+      uiError: yes;
     "
+
     color-space="sRGB"
+
     renderer="colorManagement: true; physicallyCorrectLights"
+
     vr-mode-ui="enabled: false"
+
     device-orientation-permission-ui="enabled: false">
+
+
+    <!-- CÁMARA -->
 
     <a-camera
       position="0 0 0"
       look-controls="enabled: false">
     </a-camera>
 
+
+    <!-- TARGET -->
+
     <a-entity
+      id="objetivo"
       mindar-image-target="targetIndex: 0">
 
-      <!-- SOLO UNA FIGURA DE PRUEBA -->
-      <a-box
-        position="0 0 0.1"
+
+      <!-- MODELO 3D -->
+
+      <a-gltf-model
+
+        src="./result.glb"
+
+        position="0 0 0"
+
         rotation="0 0 0"
-        color="#00ff00"
-        scale="0.3 0.3 0.3">
-      </a-box>
+
+        scale="0.5 0.5 0.5">
+
+      </a-gltf-model>
+
+
+      <!-- LUZ -->
+
+      <a-light
+        type="ambient"
+        intensity="2">
+      </a-light>
+
+
+      <a-light
+        type="directional"
+        position="1 3 2"
+        intensity="2">
+      </a-light>
+
 
     </a-entity>
 
+
   </a-scene>
+
+
+  <!-- AVISOS DE RECONOCIMIENTO -->
+
+  <script>
+
+    const objetivo =
+      document.querySelector("#objetivo");
+
+    const estado =
+      document.querySelector("#estado");
+
+
+    /*
+     * CUANDO MINDAR RECONOCE LA IMAGEN
+     */
+
+    objetivo.addEventListener("targetFound", function () {
+
+      estado.innerHTML =
+        "✅ <strong>¡Imagen reconocida!</strong><br>" +
+        "✨ Realidad aumentada activa";
+
+    });
+
+
+    /*
+     * CUANDO DEJA DE VER LA IMAGEN
+     */
+
+    objetivo.addEventListener("targetLost", function () {
+
+      estado.innerHTML =
+        "🔎 <strong>Buscando la imagen...</strong><br>" +
+        "Apuntá nuevamente hacia el proyecto";
+
+    });
+
+  </script>
+
 
 </body>
 
